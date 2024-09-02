@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api'; // Replace with your actual API URL
+const API_URL = process.env.REACT_APP_API_URL || 'http://192.168.100.7:5000/api';
+
 
 const api = axios.create({
   baseURL: API_URL,
@@ -21,13 +22,35 @@ api.interceptors.request.use((config) => {
 });
 
 export const login = async (username, password) => {
-  const response = await api.post('/auth/login', { username, password });
-  return response.data;
+  try {
+    const response = await api.post('/auth/login', { username, password });
+    const { token, user } = response.data;
+    localStorage.setItem('token', token);
+    return user;
+  } catch (error) {
+    console.error('API Error:', error.response || error);
+    let errorMessage = 'An error occurred during login.';
+    if (error.response && error.response.data && error.response.data.message) {
+      errorMessage = error.response.data.message;
+    }
+    throw new Error(errorMessage);
+  }
 };
 
 export const register = async (username, password) => {
-  const response = await api.post('/auth/register', { username, password });
-  return response.data;
+  try {
+    const response = await api.post('/auth/register', { username, password });
+    const { token, user } = response.data;
+    localStorage.setItem('token', token);
+    return user;
+  } catch (error) {
+    console.error('API Error:', error.response || error);
+    let errorMessage = 'An error occurred during registration.';
+    if (error.response && error.response.data && error.response.data.message) {
+      errorMessage = error.response.data.message;
+    }
+    throw new Error(errorMessage);
+  }
 };
 
 export const logout = async () => {

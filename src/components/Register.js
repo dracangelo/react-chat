@@ -17,9 +17,10 @@ const Register = () => {
       navigate('/chat');
     } catch (error) {
       console.error('Registration failed:', error);
+      console.error('Error response:', error.response);
       toast({
         title: 'Registration Failed',
-        description: error.message || 'An error occurred during registration.',
+        description: error.response?.data?.message || error.message || 'An error occurred during registration.',
         status: 'error',
         duration: 3000,
         isClosable: true,
